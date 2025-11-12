@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# Spring Boot config (NO subir credenciales reales)
+src/main/resources/application.properties
