@@ -1,6 +1,5 @@
 package com.fca.cafeteria.domain;
 
-import com.fca.cafeteria.config.DemoModeConfig;
 import com.fca.cafeteria.data.Bebida;
 import com.fca.cafeteria.data.TipoBebida;
 import com.fca.cafeteria.data.BebidaRepository;
