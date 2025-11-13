@@ -1,5 +1,6 @@
 package com.fca.cafeteria.domain;
 
+import com.fca.cafeteria.config.DemoModeConfig;
 import com.fca.cafeteria.data.Bebida;
 import com.fca.cafeteria.data.TipoBebida;
 import com.fca.cafeteria.data.BebidaRepository;
@@ -39,7 +40,7 @@ public class CafeteriaDomain {
         return bebidaRepository.save(bebida);
     }
 
-    // Buscar por nombre pq si
+    // Buscar por nombre por nombre
     public List<Bebida> buscarPorNombre(String nombre) {
         return bebidaRepository.findByNombre(nombre);
     }
