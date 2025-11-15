@@ -6,6 +6,8 @@ import com.fca.cafeteria.data.BebidaRepository;
 import com.fca.cafeteria.data.TipoBebidaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.fca.cafeteria.dto.CrearBebidaDTO;
+import com.fca.cafeteria.dto.BebidaSalidaDTO;
 import java.util.List;
 
 
@@ -20,26 +22,46 @@ public class CafeteriaDomain {
     @Autowired
     private TipoBebidaRepository tipoBebidaRepository;
 
-    public Bebida registrarBebida(Bebida bebida, TipoBebida tipoBebida) {
-        // Validar si ya existe una bebida con el mismo nombre y tipo
+    public BebidaSalidaDTO registrar(CrearBebidaDTO dto) {
+
+        // Validar duplicado de nombre y tipo
         if (bebidaRepository.existsByNombreAndTipoBebida_Descripcion(
-                bebida.getNombre(), tipoBebida.getDescripcion())) {
-            return null; //
+                dto.getNombre(), dto.getTipo())) {
+            return null;
         }
 
-        // Verificar si el tipo ya existe
-        Optional<TipoBebida> tipoExistente = tipoBebidaRepository.findByDescripcion(tipoBebida.getDescripcion());
+        // Buscar tipo
+        Optional<TipoBebida> tipoExistente =
+                tipoBebidaRepository.findByDescripcion(dto.getTipo());
+
+        TipoBebida tipo;
 
         if (tipoExistente.isPresent()) {
-            bebida.setTipoBebida(tipoExistente.get());
+            tipo = tipoExistente.get();
         } else {
-            TipoBebida nuevoTipo = tipoBebidaRepository.save(tipoBebida);
-            bebida.setTipoBebida(nuevoTipo);
+            TipoBebida nuevoTipo = new TipoBebida();
+            nuevoTipo.setDescripcion(dto.getTipo());
+            tipo = tipoBebidaRepository.save(nuevoTipo);
         }
-        return bebidaRepository.save(bebida);
+
+        Bebida bebida = new Bebida();
+        bebida.setNombre(dto.getNombre());
+        bebida.setDescripcion(dto.getDescripcion());
+        bebida.setTipoBebida(tipo);
+
+        Bebida guardada = bebidaRepository.save(bebida);
+
+        // Preparar respuesta
+        return new BebidaSalidaDTO(
+                guardada.getId(),
+                guardada.getNombre(),
+                guardada.getDescripcion(),
+                guardada.getTipoBebida().getDescripcion()
+        );
     }
 
-    // Buscar por nombre por nombre
+
+    // Buscar por nombre
     public List<Bebida> buscarPorNombre(String nombre) {
         return bebidaRepository.findByNombre(nombre);
     }
